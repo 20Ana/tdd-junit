@@ -4,6 +4,7 @@ import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,16 +13,20 @@ import static org.junit.Assert.assertEquals;
  * Created by ana on 22/02/18.
  */
 public class TestesLeilao {
-    Usuario maria = new Usuario("Maria");
-    Usuario jose = new Usuario("José");
-    Usuario joao = new Usuario("João");
-
-    Leilao leilao;
+    private static Leilao leilao;
+    private static Usuario maria;
+    private static Usuario jose;
+    private static Usuario joao;
     Lance lance;
 
-    @Before
-    public void setUp(){
+    @BeforeClass
+    public static void setUp(){
+
         leilao = new Leilao("IPhone X");
+
+        maria = new Usuario("Maria");
+        jose = new Usuario("José");
+        joao = new Usuario("João");
     }
 
     @Test
@@ -76,4 +81,21 @@ public class TestesLeilao {
         assertEquals(10, leilao.getLances().size());
         assertEquals(2000.0, leilao.getLances().get(9).getValor(), 0.0001);
     }
+
+    @Test
+    public void deveDobrarOUltimoLanceDado() {
+        leilao.propoe(new Lance(maria, 2000));
+        leilao.propoe(new Lance(joao, 3000));
+        leilao.dobraLance(maria);
+
+        assertEquals(4000, leilao.getLances().get(2).getValor(), 0.00001);
+    }
+
+    @Test
+    public void naoDeveDobrarCasoNaoHajaLanceAnterior() {
+        leilao.dobraLance(maria);
+
+        assertEquals(0, leilao.getLances().size());
+    }
+
 }
